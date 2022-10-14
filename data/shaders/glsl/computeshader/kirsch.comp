@@ -1,3 +1,11 @@
+/*!*****************************************************************************
+ * @file    kirsch.comp
+ * @author  Owen Huang Wensong, w.huang, 390008220
+ * @date    14 OCT 2022
+ * @brief   This is the implementation for kirsch edge detection compute shader.
+ * 
+ * @par Copyright (C) 2022 DigiPen Institute of Technology. All rights reserved.
+*******************************************************************************/
 #version 450
 
 #define TILE_WIDTH 16
@@ -60,8 +68,9 @@ const float kirsch[NUM_MASKS][MASK_HEIGHT][MASK_WIDTH] =
   }
 };
 
+// maximum number of iterations each thread might do when loading shared memory
 const int sharedLoops = (SHARE_WIDTH * SHARE_HEIGHT) / (TILE_WIDTH * TILE_HEIGHT);
-const float fMul = 1.0 / 8; // center 0
+const float fMul = 1.0 / 8; // multiplier for final division
 
 //two extra row/col
 shared vec3 sData[SHARE_HEIGHT][SHARE_WIDTH];
@@ -69,7 +78,7 @@ shared vec3 sData[SHARE_HEIGHT][SHARE_WIDTH];
 void main()
 {
   for (int i = 0; i <= sharedLoops; ++i)
-  {
+  { // load shared memory by using custom indices
     uint localID = gl_LocalInvocationID.y * TILE_WIDTH + gl_LocalInvocationID.x + i * TILE_SIZE;
     ivec2 shareID = ivec2(localID % SHARE_WIDTH, localID / SHARE_WIDTH);
     ivec2 globalID = ivec2(gl_WorkGroupID.x * TILE_WIDTH + shareID.x - MASK_WIDTH / 2, gl_WorkGroupID.y * TILE_HEIGHT + shareID.y - MASK_HEIGHT / 2);
@@ -80,18 +89,18 @@ void main()
   }
   barrier();// all invocations within a single work group must enter it before any are allowed to continue beyond it.
 
-  vec3 maxSum = vec3(0.0, 0.0, 0.0);
-  for (int i = 0; i < NUM_MASKS; ++i)
+  vec3 maxSum = vec3(0.0, 0.0, 0.0);  // holds the final sum
+  for (int i = 0; i < NUM_MASKS; ++i) // for each mask
   {
-    vec3 sum = vec3(0.0, 0.0, 0.0);
-    for (int j = 0; j < MASK_HEIGHT; ++j)
+    vec3 sum = vec3(0.0, 0.0, 0.0);   // holds the current mask's sum
+    for (int j = 0; j < MASK_HEIGHT; ++j)   // for each mask row
     {
-      for (int k = 0; k < MASK_WIDTH; ++ k)
+      for (int k = 0; k < MASK_WIDTH; ++ k) // for each mask value
       {
         sum += sData[gl_LocalInvocationID.y + j][gl_LocalInvocationID.x + k] * kirsch[i][j][k];
       }
     }
-    maxSum = max(sum, maxSum);
+    maxSum = max(sum, maxSum);  // keep the largest sum for final value
   }
 
   imageStore(resultImage, ivec2(gl_GlobalInvocationID.xy), vec4(clamp(fMul * maxSum, 0.0, 1.0), 1.0));
