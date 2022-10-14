@@ -78,13 +78,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)dep\glfw-3.3.3.bin.WIN64\include;$(SolutionDir)dep\glm-master;$(SolutionDir)dep\imgui;$(SolutionDir)dep\ktx\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)dep\glfw-3.3.3.bin.WIN64\lib-vc2019;$(SolutionDir)dep\ktx\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VULKAN_SDK)\Include;$(SolutionDir)dep\glfw-3.3.3.bin.WIN64\include;$(SolutionDir)dep\glm-master;$(SolutionDir)dep\imgui;$(SolutionDir)dep\ktx\include;$(SolutionDir)dep\ktx\other_include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(VULKAN_SDK)\Include;$(SolutionDir)dep\glfw-3.3.3.bin.WIN64\include;$(SolutionDir)dep\glm-master;$(SolutionDir)dep\imgui;$(SolutionDir)dep\ktx\include;$(SolutionDir)dep\ktx\other_include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -122,12 +120,16 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;VK_USE_PLATFORM_WIN32_KHR;NOMINMAX;_USE_MATH_DEFINES;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\VulkanTest\ktx\other_include;C:\VulkanTest\ktx\include;C:\VulkanTest\imgui;C:\VulkanSDK\1.2.170.0\Include;C:\VulkanSDK\glfw-3.3.3.bin.WIN64\include;C:\VulkanSDK\glm\glm-master</AdditionalIncludeDirectories>
+      <UndefinePreprocessorDefinitions>_UNICODE;UNICODE</UndefinePreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)dep\glfw-3.3.3.bin.WIN64\lib-vc2019;$(VULKAN_SDK)\Lib;$(SolutionDir)dep\ktx\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib; %(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,6 +141,7 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;VK_USE_PLATFORM_WIN32_KHR;NOMINMAX;_USE_MATH_DEFINES;_CRT_SECURE_NO_WARNINGS;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\VulkanTest\ktx\other_include;C:\VulkanTest\ktx\include;C:\VulkanTest\imgui;C:\VulkanSDK\1.2.170.0\Include;C:\VulkanSDK\glfw-3.3.3.bin.WIN64\include;C:\VulkanSDK\glm\glm-master</AdditionalIncludeDirectories>
+      <UndefinePreprocessorDefinitions>_UNICODE;UNICODE</UndefinePreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
