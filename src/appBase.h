@@ -238,7 +238,7 @@ public:
 	HWND window;
 	HINSTANCE windowInstance;
 #endif
-
+	void saveScreenshot(const char* filename);
 	VkAppBase(bool enableValidation = false);
 	virtual ~VkAppBase();
 	/** @brief Setup the vulkan instance, enable required extensions and connect to the physical device (GPU) */
